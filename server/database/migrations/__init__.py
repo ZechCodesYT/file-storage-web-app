@@ -1,0 +1,1 @@
+from server.database.migrations.migrations import run_migrations
