@@ -16,3 +16,8 @@ This project will be built using Python 3.10 and will use SQLite for storage. Iâ
 - [ ] Build a simple web app using FastAPI
 - [ ] Create a custom TCP protocol for syncing folders
 - [ ] Create a background service that keeps a folder synced
+
+## Videos
+Here are the links for the recordings of each YouTube live coding session I've done for this project.
+
+- [Part 0](https://youtu.be/Mv06Ev4kDHs?t=383)
