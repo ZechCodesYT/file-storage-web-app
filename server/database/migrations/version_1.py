@@ -1,10 +1,16 @@
 import aiosqlite
 
+import logging
+
+
+logger = logging.getLogger("MIGRATION_1")
+
 
 class Migration:
     version = 1
 
     async def run(self, connection: aiosqlite.Connection):
+        logger.debug("RUNNING MIGRATION 1")
         await connection.execute(
             "CREATE TABLE Users("
             "   id INTEGER PRIMARY KEY,"
@@ -31,5 +37,13 @@ class Migration:
             "   filename TEXT NOT NULL,"
             "   uploaded INTEGER NOT NULL,"
             "   folder_id INTEGER NOT NULL"
+            ")"
+        )
+
+        await connection.execute(
+            "CREATE TABLE Options("
+            "   id INTEGER PRIMARY KEY,"
+            "   key TEXT NOT NULL UNIQUE,"
+            "   value TEXT NOT NULL"
             ")"
         )
