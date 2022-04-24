@@ -16,7 +16,7 @@ async def test_migration_version_1():
         async with tables_result as cursor:
             table_names = await cursor.fetchall()
 
-        assert {row[0] for row in table_names} == {"Users", "Folders", "Files"}
+        assert {row[0] for row in table_names} == {"Users", "Folders", "Files", "Options"}
 
 
 @pytest.mark.asyncio
