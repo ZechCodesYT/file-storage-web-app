@@ -1,6 +1,6 @@
 # File Storage Web App/Service
 This is a simple file storage web app that I will build live on 
-[YouTube](https://www.youtube.com/channel/UC6-iUsH8cOQ2GxGLyIVcw-Q).
+[YouTube](https://youtu.be/Mv06Ev4kDHs).
 
 It will allow you to upload files to a web server and retrieve them later. It’ll have a web interface along with a CLI tool 
 to upload.
