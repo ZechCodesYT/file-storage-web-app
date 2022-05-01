@@ -11,6 +11,7 @@ from server.api import API_app
 from server.database import db
 
 
+@pytest.fixture()
 async def db_override():
     async with aiosqlite.connect(":memory:") as db:
         migration = version_1.Migration()
@@ -19,8 +20,11 @@ async def db_override():
 
 
 @pytest.fixture()
-async def client():
-    API_app.dependency_overrides[db] = db_override
+async def client(db_override):
+    async def get_db():
+        yield db_override
+
+    API_app.dependency_overrides[db] = get_db
     async with httpx.AsyncClient(app=API_app, base_url="http://localhost") as client:
         yield client
 
