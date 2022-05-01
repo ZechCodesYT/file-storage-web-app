@@ -8,10 +8,10 @@ from server.database.models.users import User
 @dataclass
 class File:
     id: int
-    owner_id: int
     path: str
     filename: str
     uploaded: int
+    owner_id: int
     folder_id: int
 
     db: Connection
@@ -26,6 +26,14 @@ class File:
     @property
     async def owner(self) -> User:
         return await User.get(self.owner_id, self.db)
+
+    @classmethod
+    async def create(cls, path: str, filename: str, uploaded: int, owner_id: int, folder_id: int, db: Connection):
+        await db.execute(
+            "INSERT INTO Files(path, filename, uploaded, owner_id, folder_id)"
+            "     VALUES(?, ?, ?, ?, ?)",
+            (path, filename, uploaded, owner_id, folder_id)
+        )
 
     @classmethod
     async def get(cls, file_id: int, db: Connection) -> File:

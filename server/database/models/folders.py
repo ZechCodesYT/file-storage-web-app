@@ -25,6 +25,14 @@ class Folder:
         return await User.get(self.owner_id, self.db)
 
     @classmethod
+    async def create(cls, name: str, parent_id: int, owner_id: int, db: Connection):
+        await db.execute(
+            "INSERT INTO Folders(name, parent_id, owner_id)"
+            "     VALUES(?, ?, ?)",
+            (name, parent_id, owner_id)
+        )
+
+    @classmethod
     async def get(cls, folder_id: int, db: Connection) -> Folder:
         async with db.execute("SELECT * FROM Folders WHERE id == ?", (folder_id,)) as cursor:
             row = await cursor.fetchone()
