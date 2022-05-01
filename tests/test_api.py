@@ -2,11 +2,7 @@ import aiosqlite
 import pytest
 import httpx
 
-
 from server.database.migrations import version_1
-from server.database.models.files import File
-from server.database.models.folders import Folder
-from server.database.models.users import User
 from server.api import API_app
 from server.database import db
 
@@ -32,5 +28,13 @@ async def client(db_override):
 @pytest.mark.asyncio
 async def test_register_route(client):
     response = await client.post("/register", json={"name": "Bob", "password": "SECRET"})
+    assert response.status_code == 200
+    assert response.json()["user-id"] == 1
+
+
+@pytest.mark.asyncio
+async def test_login_route(client):
+    await client.post("/register", json={"name": "Bob", "password": "SECRET"})
+    response = await client.post("/login", json={"name": "Bob", "password": "SECRET"})
     assert response.status_code == 200
     assert response.json()["user-id"] == 1
