@@ -10,3 +10,8 @@ def hash_password(password: str) -> str:
         hashed = sha256(hashed).hexdigest().encode()
 
     return hashed.decode()
+
+
+def check_password_matches(password: str, hashed_password: str) -> bool:
+    hashed = hash_password(password)
+    return hashed == hashed_password
