@@ -31,10 +31,10 @@ class Migration:
         await connection.execute(
             "CREATE TABLE Files("
             "   id INTEGER PRIMARY KEY,"
-            "   owner_id INTEGER NOT NULL,"
             "   path TEXT NOT NULL,"
             "   filename TEXT NOT NULL,"
             "   uploaded INTEGER NOT NULL,"
+            "   owner_id INTEGER NOT NULL,"
             "   folder_id INTEGER NOT NULL"
             ")"
         )
