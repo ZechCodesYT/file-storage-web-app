@@ -1,6 +1,7 @@
 import fastapi
 import logging
 
+from server.api import API_app
 from server.database import db, run_migrations
 
 
@@ -15,6 +16,4 @@ async def startup_event():
         await run_migrations(session)
 
 
-@app.get("/")
-async def hello(db=fastapi.Depends(db)):
-    return {"message": f"{db}"}
+app.mount("/api/v1/", API_app)
