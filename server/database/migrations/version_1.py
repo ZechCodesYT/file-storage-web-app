@@ -15,7 +15,7 @@ class Migration:
             "CREATE TABLE Users("
             "   id INTEGER PRIMARY KEY,"
             "   name TEXT NOT NULL UNIQUE,"
-            "   passwords TEXT NOT NULL"
+            "   password TEXT NOT NULL"
             ")"
         )
 
@@ -31,7 +31,6 @@ class Migration:
         await connection.execute(
             "CREATE TABLE Files("
             "   id INTEGER PRIMARY KEY,"
-            "   name TEXT NOT NULL,"
             "   owner_id INTEGER NOT NULL,"
             "   path TEXT NOT NULL,"
             "   filename TEXT NOT NULL,"
