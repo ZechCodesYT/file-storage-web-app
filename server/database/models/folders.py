@@ -1,11 +1,10 @@
 from __future__ import annotations
-from dataclasses import dataclass
 from aiosqlite import Connection
 from server.database.models.users import User
+from server.database.models import BaseModel
 
 
-@dataclass
-class Folder:
+class Folder(BaseModel):
     id: int
     name: str
     parent_id: int
@@ -36,4 +35,5 @@ class Folder:
     async def get(cls, folder_id: int, db: Connection) -> Folder:
         async with db.execute("SELECT * FROM Folders WHERE id == ?", (folder_id,)) as cursor:
             row = await cursor.fetchone()
-            return Folder(*row, db)
+            fields = dict(item for item in zip(["id", "name", "parent_id", "owner_id"], row))
+            return Folder(**fields, db=db)

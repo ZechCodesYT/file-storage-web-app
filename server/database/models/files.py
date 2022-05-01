@@ -1,12 +1,11 @@
 from __future__ import annotations
 from aiosqlite import Connection
-from dataclasses import dataclass
 from server.database.models.folders import Folder
 from server.database.models.users import User
+from server.database.models import BaseModel
 
 
-@dataclass
-class File:
+class File(BaseModel):
     id: int
     path: str
     filename: str
@@ -39,4 +38,5 @@ class File:
     async def get(cls, file_id: int, db: Connection) -> File:
         async with db.execute("SELECT * FROM Files WHERE id == ?", (file_id,)) as cursor:
             row = await cursor.fetchone()
-            return File(*row, db)
+            fields = dict(item for item in zip(["id", "path", "filename", "uploaded", "owner_id", "folder_id"], row))
+            return File(**fields, db=db)

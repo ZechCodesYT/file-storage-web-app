@@ -1,10 +1,9 @@
 from __future__ import annotations
 from aiosqlite import Connection
-from dataclasses import dataclass
+from server.database.models import BaseModel
 
 
-@dataclass
-class User:
+class User(BaseModel):
     id: int
     name: str
     password: str
@@ -23,4 +22,5 @@ class User:
     async def get(cls, user_id: int, db: Connection) -> User:
         async with db.execute("SELECT * FROM Users WHERE id == ?", (user_id,)) as cursor:
             row = await cursor.fetchone()
-            return User(*row, db)
+            fields = dict(item for item in zip(["id", "name", "password"], row))
+            return User(**fields, db=db)
