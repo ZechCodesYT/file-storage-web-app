@@ -10,6 +10,13 @@ This project will be built using Python 3.10 and will use SQLite for storage. Iâ
 [FastAPI](https://fastapi.tiangolo.com/) for the web app, [HTTPX](https://www.python-httpx.org/) for web requests, and 
 [Typer](https://typer.tiangolo.com/) for the CLI. For styling the web app Iâ€™ll use [Bootstrap](https://getbootstrap.com/).
 
+## Running
+You will need to have Poetry installed. It will handle installing all of the package dependencies for the project. Once you have Poetry use the following commands to run the File Storage Service.
+```shell
+poetry install
+poetry run python -m server
+```
+
 ## To Do List
 - [ ] REST API using FastAPI
 - [ ] CLI to upload/download files using Typer & HTTPX
