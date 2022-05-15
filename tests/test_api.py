@@ -2,7 +2,7 @@ import aiosqlite
 import pytest
 import httpx
 
-from server.database.migrations import version_1
+from server.database.migrations import run_migrations
 from server.api import API_app
 from server.database import db
 
@@ -10,8 +10,7 @@ from server.database import db
 @pytest.fixture()
 async def db_override():
     async with aiosqlite.connect(":memory:") as db:
-        migration = version_1.Migration()
-        await migration.run(db)
+        await run_migrations(db)
         yield db
 
 
@@ -27,14 +26,20 @@ async def client(db_override):
 
 @pytest.mark.asyncio
 async def test_register_route(client):
-    response = await client.post("/register", json={"name": "Bob", "password": "SECRET"})
+    response = await client.post(
+        "/register",
+        data={
+            "username": "Bob",
+            "password": "SECRET"
+        }
+    )
     assert response.status_code == 200
     assert response.json()["user-id"] == 1
 
 
 @pytest.mark.asyncio
 async def test_login_route(client):
-    await client.post("/register", json={"name": "Bob", "password": "SECRET"})
-    response = await client.post("/login", json={"name": "Bob", "password": "SECRET"})
+    await client.post("/register", data={"username": "Bob", "password": "SECRET"})
+    response = await client.post("/login", data={"username": "Bob", "password": "SECRET"})
     assert response.status_code == 200
-    assert response.json()["user-id"] == 1
+    assert len(response.json()["token"]) == 32
