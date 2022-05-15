@@ -1,6 +1,7 @@
 from __future__ import annotations
 from aiosqlite import Connection
 from server.database.models import BaseModel
+from time import time
 
 
 class Session(BaseModel):
@@ -9,6 +10,14 @@ class Session(BaseModel):
     expires: int
 
     db: Connection
+
+    async def refresh(self, db: Connection):
+        await db.execute(
+            "UPDATE Sessions"
+            "   SET expires=?"
+            " WHERE token == ?", (int(time()) + 600, self.token)
+        )
+        await db.commit()
 
     @classmethod
     async def create(cls, token: str, data: str, expires: int, db: Connection):
