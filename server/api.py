@@ -24,7 +24,7 @@ async def register_user(form_data: OAuth2PasswordRequestForm = fastapi.Depends()
 
 
 @API_app.get("/hello")
-async def hello(session: str = fastapi.Depends(get_session), conn=fastapi.Depends(db)):
+async def hello(session: dict = fastapi.Depends(get_session), conn=fastapi.Depends(db)):
     user = await User.get(session["user-id"], conn)
     return f"Hello {user.name}"
 
