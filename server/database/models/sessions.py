@@ -17,6 +17,7 @@ class Session(BaseModel):
             "     VALUES(?, ?, ?)",
             (token, data, expires)
         )
+        await db.commit()
 
     @classmethod
     async def get(cls, token: str, db: Connection) -> Session:
