@@ -56,6 +56,14 @@ async def create_folder(
     }
 
 
+@API_app.get("/list/{folder_id}")
+async def list_files(folder_id: int, conn=fastapi.Depends(db), session=fastapi.Depends(get_session)):
+    return {
+        "files": await File.get_files(folder_id, session["user-id"], conn),
+        "folders": await Folder.get_folders(folder_id, session["user-id"], conn)
+    }
+
+
 
 
 @API_app.post("/login")
