@@ -40,3 +40,14 @@ class Folder(BaseModel):
             row = await cursor.fetchone()
             fields = dict(item for item in zip(["id", "name", "parent_id", "owner_id"], row))
             return Folder(**fields, db=db)
+
+    @classmethod
+    async def get_folders(cls, parent_id: int, user_id: int, db: Connection) -> list[Folder]:
+        async with db.execute("SELECT * FROM Folders WHERE parent_id == ? AND owner_id == ?", (parent_id, user_id)) as cursor:
+            rows = await cursor.fetchall()
+            return [cls.create_model(row, db) for row in rows]
+
+    @classmethod
+    def create_model(cls, row, db) -> Folder:
+        fields = dict(item for item in zip(["id", "name", "parent_id", "owner_id"], row))
+        return Folder(**fields, db=db)
