@@ -25,12 +25,14 @@ class Folder(BaseModel):
         return await User.get(self.owner_id, self.db)
 
     @classmethod
-    async def create(cls, name: str, parent_id: int, owner_id: int, db: Connection):
-        await db.execute(
+    async def create(cls, name: str, parent_id: int, owner_id: int, db: Connection) -> Folder:
+        cursor = await db.execute(
             "INSERT INTO Folders(name, parent_id, owner_id)"
             "     VALUES(?, ?, ?)",
             (name, parent_id, owner_id)
         )
+        await db.commit()
+        return await cls.get(cursor.lastrowid, owner_id, db)
 
     @classmethod
     async def get(cls, folder_id: int, db: Connection) -> Folder:
