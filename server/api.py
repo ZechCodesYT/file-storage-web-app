@@ -64,6 +64,15 @@ async def list_files(folder_id: int, conn=fastapi.Depends(db), session=fastapi.D
     }
 
 
+@API_app.get("/file/{file_id}")
+async def download_file(file_id: int, conn=fastapi.Depends(db), session=fastapi.Depends(get_session)):
+    file = await File.get(file_id, session["user-id"], conn)
+    if not file:
+        raise fastapi.HTTPException(404, {"status": "FAILED", "message": f"File does not exist"})
+
+    return fastapi.responses.FileResponse(file.path, filename=file.filename)
+
+
 
 
 @API_app.post("/login")
