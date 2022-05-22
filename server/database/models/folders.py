@@ -35,8 +35,8 @@ class Folder(BaseModel):
         return await cls.get(cursor.lastrowid, owner_id, db)
 
     @classmethod
-    async def get(cls, folder_id: int, db: Connection) -> Folder:
-        async with db.execute("SELECT * FROM Folders WHERE id == ?", (folder_id,)) as cursor:
+    async def get(cls, folder_id: int, user_id: int, db: Connection) -> Folder:
+        async with db.execute("SELECT * FROM Folders WHERE id == ? AND owner_id == ?", (folder_id, user_id)) as cursor:
             row = await cursor.fetchone()
             fields = dict(item for item in zip(["id", "name", "parent_id", "owner_id"], row))
             return Folder(**fields, db=db)
