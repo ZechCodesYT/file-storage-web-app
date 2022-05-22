@@ -73,6 +73,10 @@ async def download_file(file_id: int, conn=fastapi.Depends(db), session=fastapi.
     return fastapi.responses.FileResponse(file.path, filename=file.filename)
 
 
+@API_app.delete("/file/{file_id}")
+async def delete_file(file_id: int, conn=fastapi.Depends(db), session=fastapi.Depends(get_session)):
+    await File.delete(file_id, session["user-id"], conn)
+    return {"status": "success"}
 
 
 @API_app.post("/login")
