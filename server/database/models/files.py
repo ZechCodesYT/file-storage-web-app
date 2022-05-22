@@ -1,9 +1,16 @@
 from __future__ import annotations
 from aiosqlite import Connection
+from base64 import urlsafe_b64encode
+from fastapi import UploadFile
+from pathlib import Path
 from server.database.models.folders import Folder
 from server.database.models.users import User
 from server.database.models import BaseModel
+from time import time
+import os
 from pydantic import Field
+
+upload_counter = 0
 
 
 class File(BaseModel):
@@ -40,6 +47,30 @@ class File(BaseModel):
     @classmethod
     async def get(cls, file_id: int, db: Connection) -> File:
         async with db.execute("SELECT * FROM Files WHERE id == ?", (file_id,)) as cursor:
+    @classmethod
+    async def save_to_disk(cls, file: UploadFile, user_id: int) -> str:
+        folder = Path(__file__).parent.parent.parent.parent / "user_files"
+        if not folder.exists():
+            folder.mkdir()
+
+        file_path = folder / cls.generate_file_token(user_id)
+        with file_path.open("wb") as f:
+            while data := await file.read(2048):
+                f.write(data)
+
+        return str(file_path)
+
+    @classmethod
+    def generate_file_token(cls, user_id: int) -> str:
+        global upload_counter
+        b = bytearray()
+        b[:4] = int(time()).to_bytes(4, "big")
+        b[4:8] = int(os.getpid()).to_bytes(4, "big")
+        b[8:12] = upload_counter.to_bytes(4, "big")
+        b[12:16] = user_id.to_bytes(4, "big")
+        upload_counter += 1
+        return urlsafe_b64encode(b).decode()
+
             row = await cursor.fetchone()
             fields = dict(item for item in zip(["id", "path", "filename", "uploaded", "owner_id", "folder_id"], row))
             return File(**fields, db=db)
