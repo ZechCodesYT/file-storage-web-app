@@ -6,8 +6,8 @@ from time import time
 from typing import Optional
 
 from server.database import db
-from server.database.models.users import User
 from server.database.models.files import File
+from server.database.models.folders import Folder
 from server.database.models.sessions import Session
 from server.database.models.users import User
 from server.auth import hash_password, check_password_matches
@@ -40,6 +40,19 @@ async def upload(
     model = await File.create(path, name, int(time()), session["user-id"], folder_id, conn)
     return {
         "file_id": model.id
+    }
+
+
+@API_app.post("/create-folder")
+async def create_folder(
+    name: str,
+    parent_id: int,
+    session=fastapi.Depends(get_session),
+    conn=fastapi.Depends(db)
+):
+    folder = await Folder.create(name, parent_id, session["user-id"], conn)
+    return {
+        "folder_id": folder.id
     }
 
 
