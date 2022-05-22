@@ -71,7 +71,13 @@ class File(BaseModel):
         upload_counter += 1
         return urlsafe_b64encode(b).decode()
 
+    @classmethod
+    async def get(cls, file_id: int, user_id: int, db: Connection) -> File | None:
+        async with db.execute("SELECT * FROM Files WHERE id == ? AND owner_id == ?", (file_id, user_id)) as cursor:
             row = await cursor.fetchone()
+            if not row:
+                return None
+
             fields = dict(item for item in zip(["id", "path", "filename", "uploaded", "owner_id", "folder_id"], row))
             return File(**fields, db=db)
 
