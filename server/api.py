@@ -3,10 +3,13 @@ import logging
 import json
 from fastapi.security import OAuth2PasswordRequestForm
 from time import time
+from typing import Optional
 
 from server.database import db
 from server.database.models.users import User
+from server.database.models.files import File
 from server.database.models.sessions import Session
+from server.database.models.users import User
 from server.auth import hash_password, check_password_matches
 from server.sessions import create_token, get_session
 
@@ -23,10 +26,23 @@ async def register_user(form_data: OAuth2PasswordRequestForm = fastapi.Depends()
     return {"message": "SUCCESS", "user-id": user[0].id}
 
 
-@API_app.get("/hello")
-async def hello(session: dict = fastapi.Depends(get_session), conn=fastapi.Depends(db)):
-    user = await User.get(session["user-id"], conn)
-    return f"Hello {user.name}"
+@API_app.post("/upload")
+async def upload(
+    file: fastapi.UploadFile,
+    filename: Optional[str] = None,
+    folder_id: int = -1,
+    session=fastapi.Depends(get_session),
+    conn=fastapi.Depends(db)
+):
+    name = filename or file.filename
+
+    path = await File.save_to_disk(file, session["user-id"])
+    model = await File.create(path, name, int(time()), session["user-id"], folder_id, conn)
+    return {
+        "file_id": model.id
+    }
+
+
 
 
 @API_app.post("/login")
