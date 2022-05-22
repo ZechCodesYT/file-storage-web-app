@@ -45,8 +45,15 @@ class File(BaseModel):
         return await cls.get(cursor.lastrowid, owner_id, db)
 
     @classmethod
-    async def get(cls, file_id: int, db: Connection) -> File:
-        async with db.execute("SELECT * FROM Files WHERE id == ?", (file_id,)) as cursor:
+    async def delete(cls, file_id: int, owner_id: int, db: Connection):
+        cursor = await db.execute(
+            "DELETE FROM Files"
+            "      WHERE id == ? AND owner_id == ?",
+            (file_id, owner_id)
+        )
+        await db.commit()
+        return await cls.get(cursor.lastrowid, owner_id, db)
+
     @classmethod
     async def save_to_disk(cls, file: UploadFile, user_id: int) -> str:
         folder = Path(__file__).parent.parent.parent.parent / "user_files"
