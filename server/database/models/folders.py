@@ -2,6 +2,7 @@ from __future__ import annotations
 from aiosqlite import Connection
 from server.database.models.users import User
 from server.database.models import BaseModel
+from pydantic import Field
 
 
 class Folder(BaseModel):
@@ -10,7 +11,7 @@ class Folder(BaseModel):
     parent_id: int
     owner_id: int
 
-    db: Connection
+    db: Connection = Field(export=False)
 
     @property
     async def parent(self) -> Folder | None:

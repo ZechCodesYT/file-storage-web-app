@@ -3,17 +3,18 @@ from aiosqlite import Connection
 from server.database.models.folders import Folder
 from server.database.models.users import User
 from server.database.models import BaseModel
+from pydantic import Field
 
 
 class File(BaseModel):
     id: int
-    path: str
+    path: str  # Path to the file on disk
     filename: str
     uploaded: int
     owner_id: int
     folder_id: int
 
-    db: Connection
+    db: Connection = Field(export=False)
 
     @property
     async def folder(self) -> Folder | None:
