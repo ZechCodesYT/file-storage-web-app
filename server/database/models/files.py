@@ -41,3 +41,14 @@ class File(BaseModel):
             row = await cursor.fetchone()
             fields = dict(item for item in zip(["id", "path", "filename", "uploaded", "owner_id", "folder_id"], row))
             return File(**fields, db=db)
+
+    @classmethod
+    async def get_files(cls, folder_id: int, user_id: int, db: Connection) -> list[File]:
+        async with db.execute("SELECT * FROM Files WHERE folder_id == ? AND owner_id == ?", (folder_id, user_id)) as cursor:
+            rows = await cursor.fetchall()
+            return [cls.create_file_model(row, db) for row in rows]
+
+    @classmethod
+    def create_file_model(cls, row, db) -> File:
+        fields = dict(item for item in zip(["id", "path", "filename", "uploaded", "owner_id", "folder_id"], row))
+        return File(**fields, db=db)
