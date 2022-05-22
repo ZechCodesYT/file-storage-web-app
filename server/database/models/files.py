@@ -29,11 +29,13 @@ class File(BaseModel):
 
     @classmethod
     async def create(cls, path: str, filename: str, uploaded: int, owner_id: int, folder_id: int, db: Connection):
-        await db.execute(
+        cursor = await db.execute(
             "INSERT INTO Files(path, filename, uploaded, owner_id, folder_id)"
             "     VALUES(?, ?, ?, ?, ?)",
             (path, filename, uploaded, owner_id, folder_id)
         )
+        await db.commit()
+        return await cls.get(cursor.lastrowid, owner_id, db)
 
     @classmethod
     async def get(cls, file_id: int, db: Connection) -> File:
