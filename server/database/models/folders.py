@@ -36,6 +36,9 @@ class Folder(BaseModel):
 
     @classmethod
     async def get(cls, folder_id: int, user_id: int, db: Connection) -> Folder:
+        if folder_id == -1:
+            return Folder(id=-1, name="root", parent_id=-1, owner_id=user_id, db=db)
+
         async with db.execute("SELECT * FROM Folders WHERE id == ? AND owner_id == ?", (folder_id, user_id)) as cursor:
             row = await cursor.fetchone()
             fields = dict(item for item in zip(["id", "name", "parent_id", "owner_id"], row))
