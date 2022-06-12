@@ -18,7 +18,7 @@ poetry run python -m server
 ```
 
 ## To Do List
-- [ ] REST API using FastAPI
+- [x] REST API using FastAPI
 - [ ] CLI to upload/download files using Typer & HTTPX
 - [ ] Build a simple web app using FastAPI
 - [ ] Create a custom TCP protocol for syncing folders
