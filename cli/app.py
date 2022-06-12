@@ -1,5 +1,7 @@
 import typer
 import cli.auth
+import cli.sync
+import pathlib
 
 
 app = typer.Typer()
@@ -20,3 +22,8 @@ def register(username: str, password: str):
     user_id = cli.auth.register(username, password)
     if user_id is None:
         typer.secho("Failed to register", fg=typer.colors.RED)
+
+
+@app.command()
+def sync(folder_name: str):
+    cli.sync.sync_folder(folder_name, pathlib.Path().resolve())
