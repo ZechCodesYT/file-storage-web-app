@@ -1,6 +1,8 @@
 import fastapi
 import logging
 import json
+
+import pydantic
 from fastapi.security import OAuth2PasswordRequestForm
 from time import time
 from typing import Optional
@@ -43,14 +45,18 @@ async def upload(
     }
 
 
+class CreateFolderData(pydantic.BaseModel):
+    name: str
+    parent_id: int
+
+
 @API_app.post("/create-folder")
 async def create_folder(
-    name: str,
-    parent_id: int,
+    data: CreateFolderData,
     session=fastapi.Depends(get_session),
     conn=fastapi.Depends(db)
 ):
-    folder = await Folder.create(name, parent_id, session["user-id"], conn)
+    folder = await Folder.create(data.name, data.parent_id, session["user-id"], conn)
     return {
         "folder_id": folder.id
     }
